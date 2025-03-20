@@ -24,7 +24,7 @@ export default function DocumentLayout({
   }
 
   return (
-    <div className="h-screen flex dark:bg-[#1F1F1F]">
+    <div className="h-screen flex dark:bg-primary-foreground">
       <Navigation/>
       <main className="flex-1 h-screen overflow-y-auto">{children}</main>
     </div>

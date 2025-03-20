@@ -3,8 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useMediaQuery } from "usehooks-ts";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import path from "path";
+import UserWorkSpace from "./userWorkSpace";
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -24,9 +23,11 @@ export default function Navigation() {
     }
   }, [isMobile]);
 
-  useEffect(() => {if(isMobile){
-    collaps();
-  }}, [pathname, isMobile]);
+  useEffect(() => {
+    if (isMobile) {
+      collaps();
+    }
+  }, [pathname, isMobile]);
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault();
@@ -65,12 +66,12 @@ export default function Navigation() {
       setIsCollapsed(false);
       setIsResetting(true);
 
-      sidebarRef.current.style.width = isMobile ? "100%" : "240px";
+      sidebarRef.current.style.width = isMobile ? "100%" : "340px";
 
-      navbarRef.current.style.setProperty("left", isMobile ? "0" : "240px");
+      navbarRef.current.style.setProperty("left", isMobile ? "0" : "340px");
       navbarRef.current.style.setProperty(
         "width",
-        isMobile ? "100%" : "calc(100% - 240px)"
+        isMobile ? "100%" : "calc(100% - 340px)"
       );
 
       setTimeout(() => {
@@ -115,6 +116,10 @@ export default function Navigation() {
           <ChevronsLeft className="h-6 w-6" />
         </div>
 
+        <div>
+          <UserWorkSpace />
+        </div>
+
         <div className="mt-4 px-4">Documents</div>
 
         {/* Sidebar Hover Effect */}
@@ -128,7 +133,7 @@ export default function Navigation() {
       <div
         ref={navbarRef}
         className={cn(
-          "absolute top-0 z-[99999] left-60 w-[calc(100%-240px)]",
+          "absolute top-0 z-[99999] left-60 w-[calc(100%-340px)]",
           isMobile && "left-0 w-full",
           isResetting && "transition-all duration-300 ease-in-out"
         )}
