@@ -1,19 +1,35 @@
-import { ChevronsLeft, MenuIcon } from "lucide-react";
+import { ChevronsLeft, MenuIcon, PlusCircle, Search, Settings } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useMediaQuery } from "usehooks-ts";
 import { cn } from "@/lib/utils";
 import UserWorkSpace from "./userWorkSpace";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "../../../../../../convex/_generated/api";
+import { Item } from "./item";
+import { toast } from "sonner";
 
 export default function Navigation() {
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width: 768px)");
-
   const isResizingRef = useRef(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const navbarRef = useRef<HTMLDivElement>(null);
   const [isResetting, setIsResetting] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(isMobile);
+
+  const documents = useQuery(api.documents.get);
+  const create = useMutation(api.documents.createTask);
+
+  const onCreate = () => {
+    const promise = create({ title: "Untitled" });
+
+    toast.promise(promise, {
+      loading: "Creating note...",
+      success: "Note created successfully",
+      error: "Failed to create note",
+    });
+  };
 
   useEffect(() => {
     if (isMobile) {
@@ -42,8 +58,8 @@ export default function Navigation() {
     if (!isResizingRef.current) return;
     let newWidth = e.clientX;
 
-    if (newWidth < 240) newWidth = 240;
-    if (newWidth > 768) newWidth = 768;
+    if (newWidth < 340) newWidth = 340;
+    if (newWidth > 640) newWidth = 640;
 
     if (sidebarRef.current && navbarRef.current) {
       sidebarRef.current.style.width = `${newWidth}px`;
@@ -100,7 +116,7 @@ export default function Navigation() {
       <aside
         ref={sidebarRef}
         className={cn(
-          "group/sidebar  h-screen bg-secondary overflow-y-auto relative flex w-60 flex-col z-[99999]",
+          "group/sidebar h-screen bg-secondary overflow-y-auto relative flex w-60 flex-col z-[99999]",
           isResetting && "transition-all ease-in-out duration-300",
           isMobile && "w-0"
         )}
@@ -118,9 +134,19 @@ export default function Navigation() {
 
         <div>
           <UserWorkSpace />
+          <Item label="Search" onClick={() => {}} icon={Search} isSearch/>
+
+          <Item label="settings" onClick={() => {}} icon={Settings} />
+
+          <Item onClick={onCreate} label={"New page"} icon={PlusCircle} />
+
         </div>
 
-        <div className="mt-4 px-4">Documents</div>
+        <div className="mt-4 px-4">
+          {documents?.map((document) => (
+            <p key={document._id}>{document.title}</p>
+          ))}
+        </div>
 
         {/* Sidebar Hover Effect */}
         <div
